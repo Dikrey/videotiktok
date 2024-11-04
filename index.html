@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Downloader No Watermark</title>
+
+</head>
+<body>
+  <div class="container">
+    <h1>Download Video Tanpa Watermark</h1>
+    <p>Masukkan URL video dan klik download untuk mendapatkan video tanpa watermark.</p>
+    
+    <div class="input-container">
+      <input type="text" id="videoUrl" placeholder="Masukkan URL Video">
+      <button id="downloadBtn">Download</button>
+    </div>
+    
+    <div id="statusMessage"></div>
+    <div class="loader" id="loader"></div>
+  </div>
+
+ 
+</body>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #4a90e2, #9013fe);
+    color: #fff;
+  }
+  
+  .container {
+    text-align: center;
+    padding: 2rem;
+    border-radius: 8px;
+    background-color: #ffffff20;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+  }
+  
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #fffa;
+  }
+  
+  p {
+    margin-bottom: 1.5rem;
+    color: #ddd;
+  }
+  
+  .input-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  input[type="text"] {
+    padding: 0.8rem 1rem;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 300px;
+    outline: none;
+    transition: transform 0.2s;
+  }
+  
+  input[type="text"]:focus {
+    transform: scale(1.05);
+  }
+  
+  button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff5722;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  button:hover {
+    background-color: #e64a19;
+    transform: scale(1.1);
+  }
+  
+  #statusMessage {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: color 0.3s;
+  }
+  
+  .loader {
+    display: none;
+    margin-top: 2rem;
+    border: 6px solid #ffffff30;
+    border-radius: 50%;
+    border-top: 6px solid #ffff
+  
+</style>
+<script>
+  document.getElementById('downloadBtn').addEventListener('click', async function() {
+  const videoUrl = document.getElementById('videoUrl').value;
+  const statusMessage = document.getElementById('statusMessage');
+  const loader = document.getElementById('loader');
+
+  if (videoUrl.trim() === "") {
+    statusMessage.textContent = "Silakan masukkan tautan video!";
+    statusMessage.className = "error";
+    return;
+  }
+
+  loader.style.display = "block";
+  statusMessage.textContent = "Sedang memproses...";
+  statusMessage.className = "";
+
+  try {
+    const response = await fetch('/download', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ videoUrl })
+    });
+
+    const data = await response.json();
+    loader.style.display = "none";
+
+    if (data.downloadUrl) {
+      statusMessage.textContent = "Video siap diunduh!";
+      statusMessage.className = "success";
+
+      // Simulasi tombol unduh
+      const link = document.createElement("a");
+      link.href = data.downloadUrl;
+      link.download = "video.mp4";
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+    } else {
+      statusMessage.textContent = "Gagal mengunduh video.";
+      statusMessage.className = "error";
+    }
+  } catch (error) {
+    loader.style.display = "none";
+    statusMessage.textContent = "Terjadi kesalahan!";
+    statusMessage.className = "error";
+  }
+});
+
+
+</script>
+</html>
